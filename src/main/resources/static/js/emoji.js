@@ -16,7 +16,6 @@ const emojiGrid = document.getElementById('emojiGrid');
 const categoryBtns = document.querySelectorAll('.category-btn');
 
 let currentCategory = 'smileys';
-let messageCount = 1;
 
 // 初始化
 function init() {
