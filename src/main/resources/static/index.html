@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href="css/style.css">
+        <link rel="stylesheet" type="text/css" href="css/emoji.css">
         <title>DisDiscord</title>
     </head>
     <body>
@@ -47,7 +48,22 @@
                 <div class="message-input-container">
                     <div class="message-input-wrapper">
                         <input type="text" class="message-input" placeholder="给 #频道1 发消息" id="messageInput">
+                        <button class="emoji-button" id="emojiButton">😀</button>
                         <button class="send-button" onclick="sendMessage()">发送</button>
+                    </div>
+                </div>
+                <div class="emoji-picker" id="emojiPicker">
+                    <div class="emoji-categories">
+                        <button class="category-btn active" data-category="smileys">😀</button>
+                        <button class="category-btn" data-category="gestures">👋</button>
+                        <button class="category-btn" data-category="animals">🐶</button>
+                        <button class="category-btn" data-category="food">🍕</button>
+                        <button class="category-btn" data-category="activities">⚽</button>
+                        <button class="category-btn" data-category="objects">💡</button>
+                        <button class="category-btn" data-category="symbols">❤️</button>
+                    </div>
+                    <div class="emoji-grid" id="emojiGrid">
+                        <!-- 表情将通过JavaScript动态生成 -->
                     </div>
                 </div>
             </div>
@@ -57,4 +73,5 @@
         </div>
     </body>
     <script type="text/javascript" src="js/javascript.js"></script>
+    <script type="text/javascript" src="js/emoji.js"></script>
 </html>
