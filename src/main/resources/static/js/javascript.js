@@ -1,3 +1,61 @@
+//全局变量
+const messageInput = document.getElementById('messageInput');
+const messagesContainer = document.getElementById('messagesContainer');
+let chatWS;
+
+//新消息提示管理
+class NotificationManager {
+    constructor() {
+        this.originalTitle = document.title;
+        this.hasNewMessage = false;
+        this.isPageVisible = true;
+        this.unreadCount = 0;
+
+        //初始化页面可见性检测
+        this.initVisibilityDetection();
+    }
+
+    initVisibilityDetection() {
+        //监听页面可见性变化
+        document.addEventListener('visibilitychange', () => {
+            this.isPageVisible = !document.hidden;
+            if (this.isPageVisible) {
+                //页面可见时清除提示
+                this.clearNotification();
+            }
+        });
+
+        //监听窗口焦点变化
+        window.addEventListener('focus', () => {
+            this.isPageVisible = true;
+            this.clearNotification();
+        });
+
+        window.addEventListener('blur', () => {
+            this.isPageVisible = false;
+        });
+    }
+
+    showNotification() {
+        //只有页面不可见时才显示通知
+        if (this.isPageVisible) return;
+
+        this.hasNewMessage = true;
+        this.unreadCount++;
+
+        //更新标题
+        document.title = '【新消息】' + this.originalTitle;
+    }
+
+    clearNotification() {
+        this.hasNewMessage = false;
+        this.unreadCount = 0;
+        document.title = this.originalTitle;
+    }
+}
+
+const notificationManager = new NotificationManager();
+
 //用户名输入弹窗管理
 class UsernameModal {
     constructor() {
@@ -160,6 +218,7 @@ class ChatWebSocket {
             this.attemptReconnect();
         }
     }
+
     attemptReconnect() {
         if (this.reconnectAttempts < this.maxReconnectAttempts) {
             this.reconnectAttempts++;
@@ -172,6 +231,7 @@ class ChatWebSocket {
             this.showConnectionError();
         }
     }
+
     sendMessage(type, content, channel = null) {
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
             const message = {
@@ -186,6 +246,7 @@ class ChatWebSocket {
             this.showConnectionError();
         }
     }
+
     //发送正在输入通知
     sendTypingStart() {
         if (!this.isTyping) {
@@ -201,6 +262,7 @@ class ChatWebSocket {
             this.sendTypingStop();
         }, this.typingDelay);
     }
+
     //发送停止输入通知
     sendTypingStop() {
         if (this.isTyping) {
@@ -212,10 +274,12 @@ class ChatWebSocket {
             this.typingTimeout = null;
         }
     }
+
     handleMessage(data) {
         switch (data.type) {
             case 'chat':
             case 'system':
+                notificationManager.showNotification(data);
                 this.displayMessage(data);
                 break;
             case 'user_list':
@@ -231,6 +295,7 @@ class ChatWebSocket {
                 console.log('未知消息类型:', data);
         }
     }
+
     //处理用户开始输入
     handleTypingStart(data) {
         //不显示自己的输入状态
@@ -240,6 +305,7 @@ class ChatWebSocket {
         this.typingUsers.add(data.userId);
         this.updateTypingIndicator();
     }
+
     //处理用户停止输入
     handleTypingStop(data) {
         //不处理自己的输入状态
@@ -247,6 +313,7 @@ class ChatWebSocket {
         this.typingUsers.delete(data.userId);
         this.updateTypingIndicator();
     }
+
     //更新正在输入指示器
     updateTypingIndicator() {
         const indicator = document.getElementById('typingIndicator');
@@ -268,6 +335,7 @@ class ChatWebSocket {
         //滚动到底部
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
+
     displayMessage(data) {
         const now = new Date(data.timestamp);
         const timeString = `今天 ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
@@ -300,6 +368,7 @@ class ChatWebSocket {
         messagesContainer.appendChild(messageElement);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
+
     updateUserList(users) {
         const userSidebar = document.querySelector('.user-sidebar');
         //分类用户
@@ -318,6 +387,7 @@ class ChatWebSocket {
                     ${offlineUsers.map(user => this.createUserElement(user)).join('')}
                 `;
     }
+
     createUserElement(user) {
         const isCurrentUser = user.userId === this.userId;
         return `
@@ -330,6 +400,7 @@ class ChatWebSocket {
                     </div>
                 `;
     }
+
     joinChannel(channel) {
         this.currentChannel = channel;
         this.sendMessage('join_channel', '', channel);
@@ -342,6 +413,7 @@ class ChatWebSocket {
             this.sendTypingStop();
         }
     }
+
     updateConnectionStatus(connected) {
         const header = document.querySelector('.chat-header h3');
         if (connected) {
@@ -359,6 +431,7 @@ class ChatWebSocket {
         //更新连接指示器
         updateConnectionIndicator(connected);
     }
+
     showConnectionError() {
         const messageElement = document.createElement('div');
         messageElement.className = 'message';
@@ -376,11 +449,6 @@ class ChatWebSocket {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 }
-
-//全局变量
-const messageInput = document.getElementById('messageInput');
-const messagesContainer = document.getElementById('messagesContainer');
-let chatWS;
 
 //初始化WebSocket连接
 window.addEventListener('load', function () {
