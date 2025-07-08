@@ -16,7 +16,7 @@ public class Message {
     private String channel;
     private String userId;
 
-    @JsonFormat(pattern = "yyyy/M/d HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime timestamp;

@@ -630,3 +630,110 @@ body {
 .emoji-item:hover {
     background: #404249;
 }
+
+/* 消息链接样式 */
+.message-link {
+    color: #00aff4;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.message-link:hover {
+    color: #0099d4;
+    text-decoration: underline;
+}
+
+/* @提及样式 */
+.mention {
+    color: #7289da;
+    background-color: rgba(114, 137, 218, 0.1);
+    padding: 0 2px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.mention:hover {
+    background-color: rgba(114, 137, 218, 0.2);
+}
+
+.mention-self {
+    color: #faa61a;
+    background-color: rgba(250, 166, 26, 0.1);
+}
+
+.mention-self:hover {
+    background-color: rgba(250, 166, 26, 0.2);
+}
+
+/* 代码块样式 */
+.code-block {
+    background-color: #2f3136;
+    border: 1px solid #202225;
+    border-radius: 4px;
+    padding: 12px;
+    margin: 8px 0;
+    overflow-x: auto;
+}
+
+.code-block code {
+    color: #e3e5e8;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* 行内代码样式 */
+.inline-code {
+    background-color: #2f3136;
+    color: #e3e5e8;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 85%;
+}
+
+/* 搜索高亮样式 */
+.highlight {
+    background-color: #faa61a;
+    color: #2f3136;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+/* 连接状态样式 */
+.connection-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: rgba(250, 166, 26, 0.1);
+    color: #faa61a;
+    font-size: 14px;
+    border-radius: 4px;
+    margin: 8px 16px;
+}
+
+.connection-status.connected {
+    background-color: rgba(59, 165, 92, 0.1);
+    color: #3ba55c;
+}
+
+.connection-status.error {
+    background-color: rgba(237, 66, 69, 0.1);
+    color: #ed4245;
+}
+
+/* 消息队列指示器 */
+.message-queue-indicator {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-color: #ed4245;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    display: none;
+}
