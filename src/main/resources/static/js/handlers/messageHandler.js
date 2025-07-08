@@ -1,11 +1,12 @@
 // src/main/resources/static/js/handlers/messageHandler.js
 
-import { getElementById, addEventListener } from '../utils/domUtils.js';
+import {addEventListener, getElementById} from '../utils/domUtils.js';
 
 export class MessageHandler {
-    constructor(chatWebSocket, messageInputId) {
+    constructor(chatWebSocket, messageInputId, imageHandler) {
         this.chatWebSocket = chatWebSocket;
         this.messageInput = getElementById(messageInputId);
+        this.imageHandler = imageHandler;
         this.init();
     }
 
@@ -34,7 +35,7 @@ export class MessageHandler {
         });
 
         // 发送按钮
-        const sendButton = document.querySelector('.send-button');
+        const sendButton = getElementById('sendButton');
         addEventListener(sendButton, 'click', () => {
             this.sendMessage();
         });
@@ -50,16 +51,24 @@ export class MessageHandler {
         }
     }
 
-    sendMessage() {
+    async sendMessage() {
         const message = this.messageInput.value.trim();
+        const hasImage = this.imageHandler && this.imageHandler.hasImage();
 
-        if (message === '') {
+        if (message === '' && !hasImage) {
             return;
         }
 
         if (this.chatWebSocket && this.chatWebSocket.isConnected()) {
-            this.chatWebSocket.sendChatMessage(message);
-            this.clearInput();
+            if (hasImage) {
+                // 发送图片消息
+                await this.imageHandler.sendImage(message);
+                this.clearInput();
+            } else if (message !== '') {
+                // 发送文本消息
+                this.chatWebSocket.sendChatMessage(message);
+                this.clearInput();
+            }
         } else {
             console.error('WebSocket未连接，无法发送消息');
         }
@@ -80,5 +89,9 @@ export class MessageHandler {
 
     focusInput() {
         this.messageInput.focus();
+    }
+
+    setImageHandler(imageHandler) {
+        this.imageHandler = imageHandler;
     }
 }

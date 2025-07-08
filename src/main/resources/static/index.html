@@ -45,10 +45,20 @@
                     </div>
                 </div>
                 <div class="message-input-container">
+                    <!-- 图片预览区域 -->
+                    <div class="image-preview-container" id="imagePreviewContainer">
+                        <div class="preview-info" id="previewInfo"></div>
+                        <img class="preview-image" id="previewImage" alt="预览">
+                        <div class="preview-actions">
+                            <button class="remove-preview-button" id="removePreviewButton">移除图片</button>
+                        </div>
+                    </div>
                     <div class="message-input-wrapper">
                         <input type="text" class="message-input" placeholder="给 #频道1 发消息" id="messageInput">
+                        <input type="file" class="file-input" id="fileInput" accept="image/jpeg,image/jpg,image/png">
+                        <button class="image-button" id="imageButton" title="上传图片">📎</button>
                         <button class="emoji-button" id="emojiButton">😀</button>
-                        <button class="send-button" onclick="sendMessage()">发送</button>
+                        <button class="send-button" id="sendButton">发送</button>
                     </div>
                 </div>
                 <div class="emoji-picker" id="emojiPicker">

@@ -1,16 +1,16 @@
 // src/main/resources/static/js/main.js
 
-import { NotificationManager } from './components/NotificationManager.js';
-import { UsernameModal } from './components/UsernameModal.js';
-import { MessageDisplay } from './components/MessageDisplay.js';
-import { UserList } from './components/UserList.js';
-import { TypingIndicator } from './components/TypingIndicator.js';
-import { EmojiPicker } from './components/EmojiPicker.js';
-import { ChatWebSocket } from './core/ChatWebSocket.js';
-import { ConnectionHandler } from './handlers/connectionHandler.js';
-import { ChannelHandler } from './handlers/channelHandler.js';
-import { MessageHandler } from './handlers/messageHandler.js';
-import { DEFAULT_CHANNEL } from './utils/constants.js';
+import {NotificationManager} from './components/NotificationManager.js';
+import {UsernameModal} from './components/UsernameModal.js';
+import {MessageDisplay} from './components/MessageDisplay.js';
+import {UserList} from './components/UserList.js';
+import {TypingIndicator} from './components/TypingIndicator.js';
+import {EmojiPicker} from './components/EmojiPicker.js';
+import {ImageHandler} from './components/ImageHandler.js';
+import {ChatWebSocket} from './core/ChatWebSocket.js';
+import {ConnectionHandler} from './handlers/connectionHandler.js';
+import {ChannelHandler} from './handlers/channelHandler.js';
+import {MessageHandler} from './handlers/messageHandler.js';
 
 class ChatApplication {
     constructor() {
@@ -111,7 +111,7 @@ class ChatApplication {
         this.handlers.channelHandler = new ChannelHandler(this.chatWebSocket);
 
         // 消息处理器
-        this.handlers.messageHandler = new MessageHandler(this.chatWebSocket, 'messageInput');
+        this.handlers.messageHandler = new MessageHandler(this.chatWebSocket, 'messageInput', new ImageHandler(this.chatWebSocket));
     }
 
     // 全局API方法

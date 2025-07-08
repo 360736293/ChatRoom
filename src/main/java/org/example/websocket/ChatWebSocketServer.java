@@ -121,6 +121,26 @@ public class ChatWebSocketServer {
         message.setAvatar(user.getAvatar());
         message.setUserId(user.getUserId());
         message.setTimestamp(LocalDateTime.now());
+        //检查是否是图片消息
+        try {
+            if (message.getContent() != null && message.getContent().startsWith("{")) {
+                // 尝试解析为JSON
+                Map<String, Object> contentMap = objectMapper.readValue(message.getContent(), Map.class);
+                if ("image".equals(contentMap.get("type"))) {
+                    message.setContentType("image");
+
+                    // 验证图片数据大小（Base64编码后不超过6.7MB，约等于原始5MB）
+                    String imageData = (String) contentMap.get("data");
+                    if (imageData != null && imageData.length() > 6700000) {
+                        System.err.println("图片太大，拒绝发送: " + user.getUsername());
+                        return;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // 不是JSON格式，作为普通文本处理
+            message.setContentType("text");
+        }
         //保存消息到历史记录
         channelMessages.computeIfAbsent(message.getChannel(), k -> new ArrayList<>()).add(message);
         //广播消息到指定频道

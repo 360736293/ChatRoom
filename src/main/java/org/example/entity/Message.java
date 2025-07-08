@@ -15,6 +15,8 @@ public class Message {
     private String avatar;
     private String channel;
     private String userId;
+    //消息内容类型 (text, image)
+    private String contentType;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -23,6 +25,8 @@ public class Message {
 
     public Message() {
         this.timestamp = LocalDateTime.now();
+        //默认为文本类型
+        this.contentType = "text";
     }
 
     public Message(String type, String content, String author, String avatar, String channel, String userId) {
@@ -33,28 +37,73 @@ public class Message {
         this.channel = channel;
         this.userId = userId;
         this.timestamp = LocalDateTime.now();
+        //默认为文本类型
+        this.contentType = "text";
     }
 
     // Getters and Setters
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
+    public String getType() {
+        return type;
+    }
 
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
+    public void setType(String type) {
+        this.type = type;
+    }
 
-    public String getAuthor() { return author; }
-    public void setAuthor(String author) { this.author = author; }
+    public String getContent() {
+        return content;
+    }
 
-    public String getAvatar() { return avatar; }
-    public void setAvatar(String avatar) { this.avatar = avatar; }
+    public void setContent(String content) {
+        this.content = content;
+    }
 
-    public String getChannel() { return channel; }
-    public void setChannel(String channel) { this.channel = channel; }
+    public String getAuthor() {
+        return author;
+    }
 
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
+    public void setAuthor(String author) {
+        this.author = author;
+    }
 
-    public LocalDateTime getTimestamp() { return timestamp; }
-    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
 }
 

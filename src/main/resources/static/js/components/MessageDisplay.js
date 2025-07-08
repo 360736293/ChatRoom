@@ -1,8 +1,8 @@
 // src/main/resources/static/js/components/MessageDisplay.js
 
-import { createElement, getElementById, scrollToBottom } from '../utils/domUtils.js';
-import { MESSAGE_TYPES } from '../utils/constants.js';
-import { messageFormatter } from '../utils/messageFormatter.js';
+import {createElement, getElementById, scrollToBottom} from '../utils/domUtils.js';
+import {MESSAGE_TYPES} from '../utils/constants.js';
+import {messageFormatter} from '../utils/messageFormatter.js';
 
 export class MessageDisplay {
     constructor(containerId, currentUserId) {
@@ -46,6 +46,28 @@ export class MessageDisplay {
         const isCurrentUser = data.userId === this.currentUserId;
         const authorStyle = isCurrentUser ? 'style="color: #00d4aa;"' : '';
 
+        // 检查是否是图片消息
+        let messageContent = data.content;
+        try {
+            const parsed = JSON.parse(data.content);
+            if (parsed.type === 'image' && parsed.data) {
+                messageContent = this.createImageMessage(parsed);
+                //图片消息因为提前做过格式化处理直接返回
+                return `
+                    <div class="message-avatar">${data.avatar}</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-author" ${authorStyle}>${data.author}</span>
+                            <span class="message-timestamp">${timeString}</span>
+                        </div>
+                        <div class="message-text">${messageContent}</div>
+                    </div>
+                `;
+            }
+        } catch (e) {
+            // 不是 JSON，继续作为普通消息处理
+        }
+
         return `
             <div class="message-avatar">${data.avatar}</div>
             <div class="message-content">
@@ -53,16 +75,59 @@ export class MessageDisplay {
                     <span class="message-author" ${authorStyle}>${data.author}</span>
                     <span class="message-timestamp">${timeString}</span>
                 </div>
-                <div class="message-text">${messageFormatter.formatMessage(data.content, {
-            currentUserId: this.currentUserId,
-            enableEmojis: true,
-            enableLinks: true,
-            enableMentions: true,
-            enableCodeBlocks: true,
-            enableLineBreaks: true
-        })}</div>
+                <div class="message-text">${typeof messageContent === 'string' ?
+            messageFormatter.formatMessage(messageContent, {
+                currentUserId: this.currentUserId,
+                enableEmojis: true,
+                enableLinks: true,
+                enableMentions: true,
+                enableCodeBlocks: true,
+                enableLineBreaks: true
+            }) : messageContent}</div>
             </div>
         `;
+    }
+
+    createImageMessage(imageData) {
+        let html = '';
+
+        // 如果有文字说明，先显示文字
+        if (imageData.text) {
+            html += `<div>${messageFormatter.formatMessage(imageData.text, {
+                currentUserId: this.currentUserId,
+                enableEmojis: true,
+                enableLinks: true,
+                enableMentions: true,
+                enableLineBreaks: true
+            })}</div>`;
+        }
+
+        // 生成唯一ID
+        const imageId = 'img-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+
+        // 显示图片
+        html += `<img class="message-image" 
+                     id="${imageId}"
+                     src="${imageData.data}" 
+                     alt="${imageData.fileName || '图片'}"
+                     data-full-image="${imageData.data}"
+                     style="cursor: pointer;">`;
+
+        // 延迟绑定点击事件
+        setTimeout(() => {
+            const imgElement = document.getElementById(imageId);
+            if (imgElement) {
+                imgElement.addEventListener('click', () => {
+                    window.showFullImage(imageData.data);
+                });
+                imgElement.addEventListener('error', () => {
+                    imgElement.style.display = 'none';
+                    imgElement.insertAdjacentHTML('afterend', '<div style="color: #ed4245;">图片加载失败</div>');
+                });
+            }
+        }, 100);
+
+        return html;
     }
 
     clear() {

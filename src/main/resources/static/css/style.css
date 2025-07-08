@@ -737,3 +737,120 @@ body {
     font-weight: 600;
     display: none;
 }
+
+/* 消息链接样式 */
+.message-link {
+    color: #00aff4;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.message-link:hover {
+    color: #0099d4;
+    text-decoration: underline;
+}
+
+/* 图片消息样式 */
+.message-image {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: transform 0.2s ease;
+}
+
+.message-image:hover {
+    transform: scale(1.02);
+}
+
+/* 图片预览模态框 */
+.image-preview-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    cursor: zoom-out;
+}
+
+.image-preview-modal img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+}
+
+/* 图片上传按钮 */
+.image-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+    color: #b9bbbe;
+}
+
+.image-button:hover {
+    background: rgba(79, 84, 92, 0.5);
+    color: #dcddde;
+}
+
+/* 图片预览区域 */
+.image-preview-container {
+    position: relative;
+    background-color: #2f3136;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    display: none;
+}
+
+.image-preview-container.show {
+    display: block;
+}
+
+.preview-image {
+    max-width: 200px;
+    max-height: 150px;
+    border-radius: 4px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.preview-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.preview-info {
+    color: #72767d;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.remove-preview-button {
+    background: #ed4245;
+    border: none;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.2s;
+}
+
+.remove-preview-button:hover {
+    background: #c53030;
+}
+
+/* 文件输入样式 */
+.file-input {
+    display: none;
+}
