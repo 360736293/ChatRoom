@@ -14,7 +14,7 @@ public class User {
         this.username = username;
         this.avatar = avatar;
         this.status = status;
-        this.currentChannel = "一般";
+        this.currentChannel = "频道1";
     }
 
     // Getters and Setters

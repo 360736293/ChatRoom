@@ -16,7 +16,7 @@ public class ChatController {
     public Map<String, Object> getStats() {
         Map<String, Object> stats = new HashMap<>();
         stats.put("onlineUsers", ChatWebSocketServer.getOnlineUserCount());
-        stats.put("totalMessages", ChatWebSocketServer.getChannelMessageCount("一般"));
+        stats.put("totalMessages", ChatWebSocketServer.getChannelMessageCount("频道1"));
         stats.put("serverStatus", "running");
         return stats;
     }
