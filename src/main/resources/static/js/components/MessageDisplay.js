@@ -8,6 +8,11 @@ export class MessageDisplay {
     constructor(containerId, currentUserId) {
         this.container = getElementById(containerId);
         this.currentUserId = currentUserId;
+        this.imageHandler = null;
+    }
+
+    setImageHandler(imageHandler) {
+        this.imageHandler = imageHandler;
     }
 
     displayMessage(data) {
@@ -118,7 +123,7 @@ export class MessageDisplay {
             const imgElement = document.getElementById(imageId);
             if (imgElement) {
                 imgElement.addEventListener('click', () => {
-                    window.showFullImage(imageData.data);
+                    this.imageHandler.showFullImage(imageData.data);
                 });
                 imgElement.addEventListener('error', () => {
                     imgElement.style.display = 'none';

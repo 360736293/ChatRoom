@@ -110,8 +110,11 @@ class ChatApplication {
         // 频道处理器
         this.handlers.channelHandler = new ChannelHandler(this.chatWebSocket);
 
+        let imageHandler = new ImageHandler(this.chatWebSocket);
+        this.components.messageDisplay.setImageHandler(imageHandler);
+
         // 消息处理器
-        this.handlers.messageHandler = new MessageHandler(this.chatWebSocket, 'messageInput', new ImageHandler(this.chatWebSocket));
+        this.handlers.messageHandler = new MessageHandler(this.chatWebSocket, 'messageInput', imageHandler);
     }
 
     // 全局API方法
