@@ -128,13 +128,6 @@ public class ChatWebSocketServer {
                 Map<String, Object> contentMap = objectMapper.readValue(message.getContent(), Map.class);
                 if ("image".equals(contentMap.get("type"))) {
                     message.setContentType("image");
-
-                    // 验证图片数据大小（Base64编码后不超过6.7MB，约等于原始5MB）
-                    String imageData = (String) contentMap.get("data");
-                    if (imageData != null && imageData.length() > 6700000) {
-                        System.err.println("图片太大，拒绝发送: " + user.getUsername());
-                        return;
-                    }
                 }
             }
         } catch (Exception e) {
@@ -176,9 +169,8 @@ public class ChatWebSocketServer {
         try {
             List<Message> history = channelMessages.getOrDefault(channel, new ArrayList<>());
 
-            //发送最近50条消息
-            int start = Math.max(0, history.size() - 50);
-            for (int i = start; i < history.size(); i++) {
+            //发送所有的历史消息
+            for (int i = 0; i < history.size(); i++) {
                 Message msg = history.get(i);
                 String json = objectMapper.writeValueAsString(msg);
                 session.getBasicRemote().sendText(json);
