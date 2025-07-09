@@ -65,7 +65,7 @@ public class ChatWebSocketServer {
         }
     }
 
-    @OnMessage
+    @OnMessage(maxMessageSize = 1024 * 1024 * 1024)
     public void onMessage(String messageStr, Session session, @PathParam("userId") String userId) {
         try {
             Message message = objectMapper.readValue(messageStr, Message.class);
