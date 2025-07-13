@@ -1,6 +1,8 @@
 package org.example.controller;
 
-import org.example.websocket.ChatWebSocketServer;
+import lombok.RequiredArgsConstructor;
+import org.example.service.ChannelService;
+import org.example.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,13 +12,17 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class ChatController {
+
+    private final UserService userService;
+    private final ChannelService channelService;
 
     @GetMapping("/stats")
     public Map<String, Object> getStats() {
         Map<String, Object> stats = new HashMap<>();
-        stats.put("onlineUsers", ChatWebSocketServer.getOnlineUserCount());
-        stats.put("totalMessages", ChatWebSocketServer.getChannelMessageCount("频道1"));
+        stats.put("onlineUsers", userService.getOnlineUserCount());
+        stats.put("totalMessages", channelService.getChannelMessageCount("频道1"));
         stats.put("serverStatus", "running");
         return stats;
     }

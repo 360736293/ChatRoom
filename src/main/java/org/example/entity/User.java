@@ -1,5 +1,10 @@
 package org.example.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class User {
     private String userId;
     private String username;
@@ -7,7 +12,8 @@ public class User {
     private String status; // online, idle, dnd, offline
     private String currentChannel;
 
-    public User() {}
+    public User() {
+    }
 
     public User(String userId, String username, String avatar, String status) {
         this.userId = userId;
@@ -16,20 +22,4 @@ public class User {
         this.status = status;
         this.currentChannel = "频道1";
     }
-
-    // Getters and Setters
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
-
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
-
-    public String getAvatar() { return avatar; }
-    public void setAvatar(String avatar) { this.avatar = avatar; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
-    public String getCurrentChannel() { return currentChannel; }
-    public void setCurrentChannel(String currentChannel) { this.currentChannel = currentChannel; }
 }
