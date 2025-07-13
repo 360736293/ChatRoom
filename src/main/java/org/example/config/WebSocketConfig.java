@@ -3,7 +3,7 @@ package org.example.config;
 import org.example.service.SessionManager;
 import org.example.service.UserService;
 import org.example.websocket.ChatWebSocketEndpoint;
-import org.example.websocket.handler.MessageDispatcher;
+import org.example.websocket.dispatcher.MessageDispatcher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;

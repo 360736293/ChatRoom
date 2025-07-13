@@ -1,4 +1,4 @@
-package org.example.websocket.handler;
+package org.example.websocket.dispatcher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +8,7 @@ import org.example.entity.User;
 import org.example.exception.InvalidMessageException;
 import org.example.service.BroadcastService;
 import org.example.service.ChannelService;
+import org.example.websocket.handler.MessageHandler;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.Session;

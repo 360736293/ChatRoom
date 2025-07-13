@@ -1,11 +1,10 @@
 package org.example.websocket;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.entity.Message;
 import org.example.entity.User;
 import org.example.service.SessionManager;
 import org.example.service.UserService;
-import org.example.websocket.handler.MessageDispatcher;
+import org.example.websocket.dispatcher.MessageDispatcher;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;

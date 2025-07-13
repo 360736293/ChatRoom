@@ -1,4 +1,4 @@
-package org.example.websocket.handler;
+package org.example.websocket.handler.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,6 +6,7 @@ import org.example.constant.MessageType;
 import org.example.entity.Message;
 import org.example.entity.User;
 import org.example.service.BroadcastService;
+import org.example.websocket.handler.MessageHandler;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.Session;
