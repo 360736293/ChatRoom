@@ -37,3 +37,6 @@ build/
 ### Mac OS ###
 .DS_Store
 /.idea/
+/electron-client/node_modules/
+/electron-client/package-lock.json
+/electron-client/dist/
