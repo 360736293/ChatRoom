@@ -22,7 +22,7 @@ public class ChatController {
     public Map<String, Object> getStats() {
         Map<String, Object> stats = new HashMap<>();
         stats.put("onlineUsers", userService.getOnlineUserCount());
-        stats.put("totalMessages", channelService.getChannelMessageCount("频道1"));
+        stats.put("totalMessages", channelService.getChannelMessageCount(ChatConstants.DEFAULT_CHANNEL));
         stats.put("serverStatus", "running");
         return stats;
     }
