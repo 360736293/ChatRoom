@@ -20,6 +20,6 @@ public class User {
         this.username = username;
         this.avatar = avatar;
         this.status = status;
-        this.currentChannel = "频道1";
+        this.currentChannel = ChatConstants.DEFAULT_CHANNEL;
     }
 }
