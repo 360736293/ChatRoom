@@ -23,7 +23,7 @@ public class ChatWebSocketEndpoint {
     private static UserService userService;
     private static MessageDispatcher messageDispatcher;
 
-    // 使用静态方法注入依赖（因为WebSocket端点是由容器管理的）
+    // 使用静态方法注入依赖（因为WebSocket端点是由Servlet容器而非Spring容器管理的）
     public static void setDependencies(SessionManager sessionManager,
                                        UserService userService,
                                        MessageDispatcher messageDispatcher) {
