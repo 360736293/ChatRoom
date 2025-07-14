@@ -77,8 +77,8 @@ public class BroadcastService {
         Message systemMsg = new Message(
                 MessageType.SYSTEM.getValue(),
                 content,
-                "系统",
-                "S",
+                ChatConstants.SYSTEM_USERNAME,
+                ChatConstants.SYSTEM_AVATAR,
                 channel,
                 ChatConstants.SYSTEM_USER_ID
         );
