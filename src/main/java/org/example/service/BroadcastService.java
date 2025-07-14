@@ -1,8 +1,10 @@
 package org.example.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.example.constant.ChatConstants;
 import org.example.constant.MessageType;
 import org.example.entity.Message;
@@ -12,11 +14,12 @@ import org.example.event.UserStatusChangeEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
-import javax.websocket.Session;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.websocket.Session;
 
 /**
  * 广播服务，负责消息广播
@@ -27,8 +30,11 @@ import java.util.Map;
 public class BroadcastService {
 
     private final SessionManager sessionManager;
+
     private final UserService userService;
+
     private final ChannelService channelService;
+
     private final ObjectMapper objectMapper;
 
     /**
@@ -75,12 +81,12 @@ public class BroadcastService {
      */
     public void broadcastSystemMessage(String content, String channel) {
         Message systemMsg = new Message(
-                MessageType.SYSTEM.getValue(),
-                content,
-                ChatConstants.SYSTEM_USERNAME,
-                ChatConstants.SYSTEM_AVATAR,
-                channel,
-                ChatConstants.SYSTEM_USER_ID
+            MessageType.SYSTEM.getValue(),
+            content,
+            ChatConstants.SYSTEM_USERNAME,
+            ChatConstants.SYSTEM_AVATAR,
+            channel,
+            ChatConstants.SYSTEM_USER_ID
         );
 
         // 保存到历史记录
@@ -98,7 +104,7 @@ public class BroadcastService {
             List<User> userList = userService.getAllUsers();
 
             Map<String, Object> userListMsg = new HashMap<>();
-            userListMsg.put("type", "user_list");
+            userListMsg.put("type", MessageType.USER_LIST.getValue());
             userListMsg.put("users", userList);
 
             String json = objectMapper.writeValueAsString(userListMsg);
