@@ -2,6 +2,8 @@ package org.example.websocket.handler.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.example.constant.MessageContentType;
 import org.example.constant.MessageType;
 import org.example.entity.Message;
 import org.example.entity.User;
@@ -10,8 +12,9 @@ import org.example.service.ChannelService;
 import org.example.websocket.handler.MessageHandler;
 import org.springframework.stereotype.Component;
 
-import javax.websocket.Session;
 import java.time.LocalDateTime;
+
+import javax.websocket.Session;
 
 @Slf4j
 @Component
@@ -19,6 +22,7 @@ import java.time.LocalDateTime;
 public class ChatMessageHandler implements MessageHandler {
 
     private final ChannelService channelService;
+
     private final BroadcastService broadcastService;
 
     @Override
@@ -50,12 +54,12 @@ public class ChatMessageHandler implements MessageHandler {
         try {
             if (message.getContent() != null && message.getContent().startsWith("{")) {
                 // 简单检查是否为图片消息
-                if (message.getContent().contains("\"type\":\"" + ChatConstants.IMAGE_CONTENT_TYPE + "\"")) {
-                    message.setContentType("image");
+                if (message.getContent().contains("\"type\":\"" + MessageContentType.IMAGE.getValue() + "\"")) {
+                    message.setContentType(MessageContentType.IMAGE.getValue());
                 }
             }
         } catch (Exception e) {
-            message.setContentType(ChatConstants.DEFAULT_CONTENT_TYPE);
+            message.setContentType(MessageContentType.TEXT.getValue());
         }
     }
 }
