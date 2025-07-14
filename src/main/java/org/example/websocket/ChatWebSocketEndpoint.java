@@ -1,13 +1,19 @@
 package org.example.websocket;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.example.constant.ChatConstants;
 import org.example.entity.User;
 import org.example.service.SessionManager;
 import org.example.service.UserService;
 import org.example.websocket.dispatcher.MessageDispatcher;
 import org.springframework.stereotype.Component;
 
-import javax.websocket.*;
+import javax.websocket.OnClose;
+import javax.websocket.OnError;
+import javax.websocket.OnMessage;
+import javax.websocket.OnOpen;
+import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
@@ -20,13 +26,15 @@ import javax.websocket.server.ServerEndpoint;
 public class ChatWebSocketEndpoint {
 
     private static SessionManager sessionManager;
+
     private static UserService userService;
+
     private static MessageDispatcher messageDispatcher;
 
     // 使用静态方法注入依赖（因为WebSocket端点是由Servlet容器而非Spring容器管理的）
     public static void setDependencies(SessionManager sessionManager,
-                                       UserService userService,
-                                       MessageDispatcher messageDispatcher) {
+        UserService userService,
+        MessageDispatcher messageDispatcher) {
         ChatWebSocketEndpoint.sessionManager = sessionManager;
         ChatWebSocketEndpoint.userService = userService;
         ChatWebSocketEndpoint.messageDispatcher = messageDispatcher;
@@ -51,7 +59,7 @@ public class ChatWebSocketEndpoint {
         }
     }
 
-    @OnMessage(maxMessageSize = 1024 * 1024 * 1024)
+    @OnMessage(maxMessageSize = ChatConstants.MAX_MESSAGE_SIZE)
     public void onMessage(String messageStr, Session session, @PathParam("userId") String userId) {
         try {
             log.debug("收到消息: userId={}, message={}", userId, messageStr);
