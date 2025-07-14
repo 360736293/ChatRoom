@@ -30,7 +30,7 @@ public class Message {
     public Message() {
         this.timestamp = LocalDateTime.now();
         //默认为文本类型
-        this.contentType = "text";
+        this.contentType = ChatConstants.DEFAULT_CONTENT_TYPE;
     }
 
     public Message(String type, String content, String author, String avatar, String channel, String userId) {
@@ -42,7 +42,7 @@ public class Message {
         this.userId = userId;
         this.timestamp = LocalDateTime.now();
         //默认为文本类型
-        this.contentType = "text";
+        this.contentType = ChatConstants.DEFAULT_CONTENT_TYPE;
     }
 }
 
