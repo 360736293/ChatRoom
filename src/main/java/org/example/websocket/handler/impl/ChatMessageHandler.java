@@ -50,12 +50,12 @@ public class ChatMessageHandler implements MessageHandler {
         try {
             if (message.getContent() != null && message.getContent().startsWith("{")) {
                 // 简单检查是否为图片消息
-                if (message.getContent().contains("\"type\":\"image\"")) {
+                if (message.getContent().contains("\"type\":\"" + ChatConstants.IMAGE_CONTENT_TYPE + "\"")) {
                     message.setContentType("image");
                 }
             }
         } catch (Exception e) {
-            message.setContentType("text");
+            message.setContentType(ChatConstants.DEFAULT_CONTENT_TYPE);
         }
     }
 }
