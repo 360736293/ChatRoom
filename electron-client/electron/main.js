@@ -50,9 +50,9 @@ function createWindow() {
     });
 
     // 创建菜单
-    createMenu();
+    // createMenu();
     // 不显示菜单
-    mainWindow.setMenuBarVisibility(false);
+    mainWindow.setMenu(null);
 
     // 创建系统托盘
     createTray();
