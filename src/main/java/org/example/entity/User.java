@@ -2,6 +2,7 @@ package org.example.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.example.constant.ChatConstants;
 
 @Setter
 @Getter
