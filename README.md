@@ -4,7 +4,7 @@
 
 ## 📖 项目简介
 
-娱乐项目，功能目前只是个DEMO。
+娱乐项目，功能目前只是个DEMO，完全由AI实现（bug为人工修复）。
 
 DisDiscord 是一个仿 Discord 的实时聊天应用，采用 SpringBoot + WebSocket 构建后端，原生 JavaScript 实现前端，Electron 实现客户端，提供流畅的即时通讯体验。
 
