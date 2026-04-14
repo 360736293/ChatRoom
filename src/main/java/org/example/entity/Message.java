@@ -14,10 +14,13 @@ import org.example.constant.MessageContentType;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Setter
 @Getter
 public class Message {
+    private String messageId;
+
     private String type;
 
     private String content;
@@ -42,12 +45,13 @@ public class Message {
     private List<String> mentions = new ArrayList<>();
 
     public Message() {
+        this.messageId = UUID.randomUUID().toString();
         timestamp = LocalDateTime.now();
-        //默认为文本类型
         contentType = MessageContentType.TEXT.getValue();
     }
 
     public Message(String type, String content, String author, String avatar, String channel, String userId) {
+        this.messageId = UUID.randomUUID().toString();
         this.type = type;
         this.content = content;
         this.author = author;
@@ -55,11 +59,11 @@ public class Message {
         this.channel = channel;
         this.userId = userId;
         timestamp = LocalDateTime.now();
-        //默认为文本类型
         contentType = MessageContentType.TEXT.getValue();
     }
 
     public Message(String type, String content, String author, String avatar, String channel, String userId, List<String> mentions) {
+        this.messageId = UUID.randomUUID().toString();
         this.type = type;
         this.content = content;
         this.author = author;
@@ -68,7 +72,6 @@ public class Message {
         this.userId = userId;
         this.mentions = mentions;
         timestamp = LocalDateTime.now();
-        //默认为文本类型
         contentType = MessageContentType.TEXT.getValue();
     }
 }

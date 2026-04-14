@@ -72,9 +72,11 @@ export class ChatWebSocket extends WebSocketManager {
     async init(userId) {
         this.userId = userId;
         this.url = `ws://localhost/websocket/${this.userId}`;
-        // 如果messageHandler已经存在，设置当前用户ID
         if (this.messageHandler && this.messageHandler.setCurrentUserId) {
             this.messageHandler.setCurrentUserId(userId);
+        }
+        if (this.notificationManager && this.notificationManager.setUserId) {
+            this.notificationManager.setUserId(userId);
         }
         await this.connect();
     }
@@ -83,12 +85,9 @@ export class ChatWebSocket extends WebSocketManager {
         switch (data.type) {
             case MESSAGE_TYPES.CHAT:
             case MESSAGE_TYPES.SYSTEM:
-                // 检查是否@了当前用户
                 if (data.mentions && data.mentions.includes(this.userId)) {
-                    // 显示@提醒通知
-                    this.notificationManager.showMentionNotification();
+                    this.notificationManager.showMentionNotification(data.messageId);
                 } else {
-                    // 显示普通通知
                     this.notificationManager.showNotification();
                 }
                 this.messageDisplay.displayMessage(data);
