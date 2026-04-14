@@ -1,12 +1,14 @@
 // src/main/resources/static/js/handlers/messageHandler.js
 
 import {addEventListener, getElementById} from '../utils/domUtils.js';
+import {MentionAutocomplete} from '../components/MentionAutocomplete.js';
 
 export class MessageHandler {
     constructor(chatWebSocket, messageInputId, imageHandler) {
         this.chatWebSocket = chatWebSocket;
         this.messageInput = getElementById(messageInputId);
         this.imageHandler = imageHandler;
+        this.mentionAutocomplete = new MentionAutocomplete(messageInputId);
         this.init();
     }
 
@@ -93,5 +95,15 @@ export class MessageHandler {
 
     setImageHandler(imageHandler) {
         this.imageHandler = imageHandler;
+    }
+
+    // 更新用户列表
+    updateUserList(users) {
+        this.mentionAutocomplete.setUserList(users);
+    }
+
+    // 设置当前用户ID
+    setCurrentUserId(userId) {
+        this.mentionAutocomplete.setCurrentUserId(userId);
     }
 }

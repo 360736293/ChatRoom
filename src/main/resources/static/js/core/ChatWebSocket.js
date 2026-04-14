@@ -14,6 +14,7 @@ export class ChatWebSocket extends WebSocketManager {
         this.userList = userList;
         this.typingIndicator = typingIndicator;
         this.notificationManager = notificationManager;
+        this.messageHandler = null; // 消息处理器引用
 
         // 输入状态管理
         this.typingTimeout = null;
@@ -27,6 +28,15 @@ export class ChatWebSocket extends WebSocketManager {
 
         // 设置事件处理器
         this.setupEventHandlers();
+    }
+
+    // 设置消息处理器
+    setMessageHandler(messageHandler) {
+        this.messageHandler = messageHandler;
+        // 同时设置当前用户ID
+        if (this.userId && messageHandler.setCurrentUserId) {
+            messageHandler.setCurrentUserId(this.userId);
+        }
     }
 
     setupEventHandlers() {
@@ -62,6 +72,10 @@ export class ChatWebSocket extends WebSocketManager {
     async init(userId) {
         this.userId = userId;
         this.url = `ws://localhost/websocket/${this.userId}`;
+        // 如果messageHandler已经存在，设置当前用户ID
+        if (this.messageHandler && this.messageHandler.setCurrentUserId) {
+            this.messageHandler.setCurrentUserId(userId);
+        }
         await this.connect();
     }
 
@@ -69,12 +83,23 @@ export class ChatWebSocket extends WebSocketManager {
         switch (data.type) {
             case MESSAGE_TYPES.CHAT:
             case MESSAGE_TYPES.SYSTEM:
-                this.notificationManager.showNotification();
+                // 检查是否@了当前用户
+                if (data.mentions && data.mentions.includes(this.userId)) {
+                    // 显示@提醒通知
+                    this.notificationManager.showMentionNotification();
+                } else {
+                    // 显示普通通知
+                    this.notificationManager.showNotification();
+                }
                 this.messageDisplay.displayMessage(data);
                 break;
 
             case MESSAGE_TYPES.USER_LIST:
                 this.userList.updateList(data.users);
+                // 更新提及自动完成的用户列表
+                if (this.messageHandler) {
+                    this.messageHandler.updateUserList(data.users);
+                }
                 break;
 
             case MESSAGE_TYPES.TYPING_START:
@@ -127,7 +152,35 @@ export class ChatWebSocket extends WebSocketManager {
 
     sendChatMessage(content) {
         this.sendTypingStop();
-        this.sendMessage(MESSAGE_TYPES.CHAT, content);
+        // 提取@提及的用户
+        const mentions = this.extractMentions(content);
+        this.sendMessage(MESSAGE_TYPES.CHAT, content, null, mentions);
+    }
+
+    // 提取@提及的用户
+    extractMentions(content) {
+        const mentionRegex = /@([^\s@]+)/g;
+        const mentions = [];
+        let match;
+        while ((match = mentionRegex.exec(content)) !== null) {
+            mentions.push(match[1]);
+        }
+        return mentions;
+    }
+
+    sendMessage(type, content, channel = null, mentions = []) {
+        const message = {
+            type: type,
+            content: content,
+            channel: channel || this.currentChannel,
+            timestamp: this.formatDateForBackend(new Date()),
+            mentions: mentions // 添加提及的用户
+        };
+
+        if (!this.send(message)) {
+            console.error('WebSocket未连接');
+            this.messageDisplay.showError('连接已断开，无法发送消息');
+        }
     }
 
     sendTypingStart() {

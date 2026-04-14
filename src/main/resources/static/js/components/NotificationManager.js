@@ -35,6 +35,12 @@ export class NotificationManager {
         document.title = '【新消息】' + this.originalTitle;
     }
 
+    showMentionNotification() {
+        // 无论页面是否可见，都显示@提醒
+        // 更新标题
+        document.title = '【@提到你】' + this.originalTitle;
+    }
+
     clearNotification() {
         document.title = this.originalTitle;
     }

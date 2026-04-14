@@ -115,6 +115,9 @@ class ChatApplication {
 
         // 消息处理器
         this.handlers.messageHandler = new MessageHandler(this.chatWebSocket, 'messageInput', imageHandler);
+        
+        // 将消息处理器设置到WebSocket中
+        this.chatWebSocket.setMessageHandler(this.handlers.messageHandler);
     }
 
     // 全局API方法

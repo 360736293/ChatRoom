@@ -47,7 +47,7 @@ public class ChatMessageHandler implements MessageHandler {
         // 广播消息
         broadcastService.broadcastToChannel(message, message.getChannel());
 
-        log.info("处理聊天消息: user={}, channel={}", user.getUsername(), message.getChannel());
+        log.info("处理聊天消息: user={}, channel={}, mentions={}", user.getUsername(), message.getChannel(), message.getMentions());
     }
 
     private void processImageMessage(Message message) {

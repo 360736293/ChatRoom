@@ -12,6 +12,8 @@ import lombok.Setter;
 import org.example.constant.MessageContentType;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
@@ -36,6 +38,9 @@ public class Message {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime timestamp;
 
+    // @提及的用户列表
+    private List<String> mentions = new ArrayList<>();
+
     public Message() {
         timestamp = LocalDateTime.now();
         //默认为文本类型
@@ -49,6 +54,19 @@ public class Message {
         this.avatar = avatar;
         this.channel = channel;
         this.userId = userId;
+        timestamp = LocalDateTime.now();
+        //默认为文本类型
+        contentType = MessageContentType.TEXT.getValue();
+    }
+
+    public Message(String type, String content, String author, String avatar, String channel, String userId, List<String> mentions) {
+        this.type = type;
+        this.content = content;
+        this.author = author;
+        this.avatar = avatar;
+        this.channel = channel;
+        this.userId = userId;
+        this.mentions = mentions;
         timestamp = LocalDateTime.now();
         //默认为文本类型
         contentType = MessageContentType.TEXT.getValue();
