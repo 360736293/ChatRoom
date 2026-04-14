@@ -216,6 +216,7 @@ body {
     color: #dcddde;
     line-height: 1.375;
     word-wrap: break-word;
+    word-break: break-all;
 }
 
 /* 消息输入区域 */
