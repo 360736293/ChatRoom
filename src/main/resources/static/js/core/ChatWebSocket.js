@@ -78,7 +78,65 @@ export class ChatWebSocket extends WebSocketManager {
         if (this.notificationManager && this.notificationManager.setUserId) {
             this.notificationManager.setUserId(userId);
         }
+        
+        this.setupMentionNavigation();
+        
         await this.connect();
+    }
+
+    setupMentionNavigation() {
+        if (this.notificationManager) {
+            this.notificationManager.onNavigateToMention = (messageId) => {
+                this.navigateToMention(messageId);
+            };
+        }
+        
+        if (this.messageDisplay) {
+            this.messageDisplay.onMentionMessageDisplayed = (messageId) => {
+                if (this.notificationManager && !this.notificationManager.isPageVisible) {
+                    this.notificationManager.addUnreadMention(messageId);
+                }
+            };
+        }
+    }
+
+    navigateToMention(messageId) {
+        if (this.messageDisplay) {
+            const found = this.messageDisplay.scrollToMessage(messageId, true);
+            if (found) {
+                this.showMentionToast(messageId);
+            }
+        }
+    }
+
+    showMentionToast(messageId) {
+        const existingToast = document.querySelector('.mention-toast');
+        if (existingToast) {
+            existingToast.remove();
+        }
+
+        const toast = document.createElement('div');
+        toast.className = 'mention-toast';
+        toast.innerHTML = `
+            <div class="mention-toast-content">
+                <span class="mention-toast-icon">💬</span>
+                <span class="mention-toast-text">有人@了你</span>
+            </div>
+        `;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 10);
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }, 3000);
     }
 
     processMessage(data) {

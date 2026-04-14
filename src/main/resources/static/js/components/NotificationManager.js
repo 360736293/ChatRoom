@@ -1,6 +1,7 @@
 // src/main/resources/static/js/components/NotificationManager.js
 
 const STORAGE_KEY_PREFIX = 'mentioned_messages_';
+const UNREAD_MENTIONS_KEY_PREFIX = 'unread_mentions_';
 const MAX_STORED_IDS = 500;
 const STORAGE_EXPIRY_DAYS = 7;
 
@@ -9,6 +10,7 @@ export class NotificationManager {
         this.originalTitle = document.title;
         this.isPageVisible = true;
         this.userId = userId;
+        this.onNavigateToMention = null;
         this.initVisibilityDetection();
     }
 
@@ -20,22 +22,44 @@ export class NotificationManager {
         return STORAGE_KEY_PREFIX + (this.userId || 'default');
     }
 
+    getUnreadMentionsKey() {
+        return UNREAD_MENTIONS_KEY_PREFIX + (this.userId || 'default');
+    }
+
     initVisibilityDetection() {
         document.addEventListener('visibilitychange', () => {
+            const wasHidden = !this.isPageVisible;
             this.isPageVisible = !document.hidden;
+            
             if (this.isPageVisible) {
                 this.clearNotification();
+                if (wasHidden) {
+                    this.handlePageReturn();
+                }
             }
         });
 
         window.addEventListener('focus', () => {
+            const wasHidden = !this.isPageVisible;
             this.isPageVisible = true;
             this.clearNotification();
+            if (wasHidden) {
+                this.handlePageReturn();
+            }
         });
 
         window.addEventListener('blur', () => {
             this.isPageVisible = false;
         });
+    }
+
+    handlePageReturn() {
+        const unreadMentions = this.getUnreadMentions();
+        if (unreadMentions.length > 0 && this.onNavigateToMention) {
+            const latestMention = unreadMentions[unreadMentions.length - 1];
+            this.clearUnreadMentions();
+            this.onNavigateToMention(latestMention.messageId);
+        }
     }
 
     showNotification() {
@@ -56,6 +80,10 @@ export class NotificationManager {
 
         document.title = '【@提到你】' + this.originalTitle;
         this.markAsNotified(messageId);
+
+        if (!this.isPageVisible) {
+            this.addUnreadMention(messageId);
+        }
     }
 
     hasBeenNotified(messageId) {
@@ -111,6 +139,40 @@ export class NotificationManager {
         }
     }
 
+    addUnreadMention(messageId) {
+        try {
+            const unreadMentions = this.getUnreadMentions();
+            const exists = unreadMentions.some(m => m.messageId === messageId);
+            if (!exists) {
+                unreadMentions.push({
+                    messageId: messageId,
+                    timestamp: Date.now()
+                });
+                localStorage.setItem(this.getUnreadMentionsKey(), JSON.stringify(unreadMentions));
+            }
+        } catch (e) {
+            console.error('Error adding unread mention:', e);
+        }
+    }
+
+    getUnreadMentions() {
+        try {
+            const stored = localStorage.getItem(this.getUnreadMentionsKey());
+            return stored ? JSON.parse(stored) : [];
+        } catch (e) {
+            console.error('Error reading unread mentions:', e);
+            return [];
+        }
+    }
+
+    clearUnreadMentions() {
+        try {
+            localStorage.removeItem(this.getUnreadMentionsKey());
+        } catch (e) {
+            console.error('Error clearing unread mentions:', e);
+        }
+    }
+
     clearNotification() {
         document.title = this.originalTitle;
     }
@@ -118,6 +180,7 @@ export class NotificationManager {
     clearAllStoredNotifications() {
         try {
             localStorage.removeItem(this.getStorageKey());
+            localStorage.removeItem(this.getUnreadMentionsKey());
         } catch (e) {
             console.error('Error clearing stored notifications:', e);
         }

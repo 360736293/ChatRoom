@@ -856,3 +856,60 @@ body {
 .file-input {
     display: none;
 }
+
+/* @消息高亮样式 */
+.mention-highlight {
+    background-color: rgba(250, 166, 26, 0.15) !important;
+    border-left: 3px solid #faa61a;
+    padding-left: 13px !important;
+    margin-left: -16px !important;
+    animation: mentionPulse 0.5s ease-out;
+}
+
+@keyframes mentionPulse {
+    0% {
+        background-color: rgba(250, 166, 26, 0.3);
+    }
+    50% {
+        background-color: rgba(250, 166, 26, 0.2);
+    }
+    100% {
+        background-color: rgba(250, 166, 26, 0.15);
+    }
+}
+
+/* @消息提示Toast样式 */
+.mention-toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background: linear-gradient(135deg, #5865f2, #7289da);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 3000;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.mention-toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.mention-toast-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mention-toast-icon {
+    font-size: 18px;
+}
+
+.mention-toast-text {
+    font-weight: 500;
+    font-size: 14px;
+}

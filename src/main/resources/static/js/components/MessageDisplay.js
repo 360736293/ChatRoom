@@ -9,6 +9,7 @@ export class MessageDisplay {
         this.container = getElementById(containerId);
         this.currentUserId = currentUserId;
         this.imageHandler = null;
+        this.onMentionMessageDisplayed = null;
     }
 
     setImageHandler(imageHandler) {
@@ -19,11 +20,19 @@ export class MessageDisplay {
         const messageElement = this.createMessageElement(data);
         this.container.appendChild(messageElement);
         scrollToBottom(this.container);
+        
+        if (data.mentions && data.mentions.includes(this.currentUserId) && this.onMentionMessageDisplayed) {
+            this.onMentionMessageDisplayed(data.messageId);
+        }
     }
 
     createMessageElement(data) {
         const timeString = messageFormatter.formatTimestamp(data.timestamp);
         const messageElement = createElement('div', 'message');
+        
+        if (data.messageId) {
+            messageElement.setAttribute('data-message-id', data.messageId);
+        }
 
         if (data.type === MESSAGE_TYPES.SYSTEM) {
             messageElement.innerHTML = this.createSystemMessage(data, timeString);
@@ -162,5 +171,21 @@ export class MessageDisplay {
 
     updateCurrentUserId(userId) {
         this.currentUserId = userId;
+    }
+
+    scrollToMessage(messageId, highlight = true) {
+        const messageElement = this.container.querySelector(`[data-message-id="${messageId}"]`);
+        if (messageElement) {
+            messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            if (highlight) {
+                messageElement.classList.add('mention-highlight');
+                setTimeout(() => {
+                    messageElement.classList.remove('mention-highlight');
+                }, 3000);
+            }
+            return true;
+        }
+        return false;
     }
 }
