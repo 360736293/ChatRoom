@@ -3,6 +3,7 @@ package org.example.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,11 +47,11 @@ public class ImageStorageService {
             }
 
             String imageData = parts[1];
-            byte[] imageBytes = javax.xml.bind.DatatypeConverter.parseBase64Binary(imageData);
+            byte[] imageBytes = DatatypeConverter.parseBase64Binary(imageData);
 
             // 生成唯一文件名
             String extension = getFileExtension(fileName);
-            String uniqueFileName = UUID.randomUUID().toString() + (extension != null ? "." + extension : ".png");
+            String uniqueFileName = UUID.randomUUID() + (extension != null ? "." + extension : ".png");
 
             // 存储图片
             Path imagePath = Paths.get(IMAGE_STORAGE_DIR, uniqueFileName);
