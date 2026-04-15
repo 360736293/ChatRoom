@@ -139,6 +139,11 @@ class ChatApplication {
         
         // 将消息处理器设置到WebSocket中
         this.chatWebSocket.setMessageHandler(this.handlers.messageHandler);
+        
+        // 设置引用回复回调
+        this.components.messageDisplay.onQuoteReply = (messageData) => {
+            this.handlers.messageHandler.setQuotedMessage(messageData);
+        };
     }
 
     // 全局API方法
@@ -171,3 +176,12 @@ document.addEventListener('DOMContentLoaded', () => {
 window.sendMessage = () => chatApp.sendMessage();
 window.changeChannel = (channel) => chatApp.changeChannel(channel);
 window.logout = () => chatApp.logout();
+window.scrollToMessage = (messageId) => {
+    console.log('Global scrollToMessage called with id:', messageId);
+    if (chatApp && chatApp.components && chatApp.components.messageDisplay) {
+        console.log('Calling messageDisplay.scrollToMessage');
+        chatApp.components.messageDisplay.scrollToMessage(messageId, true);
+    } else {
+        console.log('chatApp or messageDisplay not available');
+    }
+};

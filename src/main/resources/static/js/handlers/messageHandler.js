@@ -9,6 +9,7 @@ export class MessageHandler {
         this.messageInput = getElementById(messageInputId);
         this.imageHandler = imageHandler;
         this.mentionAutocomplete = new MentionAutocomplete(messageInputId);
+        this.quotedMessage = null;
         this.init();
     }
 
@@ -67,8 +68,8 @@ export class MessageHandler {
                 await this.imageHandler.sendImage(message);
                 this.clearInput();
             } else if (message !== '') {
-                // 发送文本消息
-                this.chatWebSocket.sendChatMessage(message);
+                // 发送文本消息（支持引用回复）
+                this.chatWebSocket.sendChatMessage(message, this.quotedMessage);
                 this.clearInput();
             }
         } else {
@@ -76,8 +77,60 @@ export class MessageHandler {
         }
     }
 
+    // 设置引用消息
+    setQuotedMessage(message) {
+        this.quotedMessage = message;
+        // 清空输入框，让用户输入回复内容
+        this.messageInput.value = '';
+        this.messageInput.focus();
+        
+        // 显示引用提示
+        this.showQuoteNotification(message);
+    }
+
+    // 显示引用提示
+    showQuoteNotification(message) {
+        // 移除已存在的提示
+        const existingNotification = document.querySelector('.quote-notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+
+        // 创建提示元素
+        const notification = document.createElement('div');
+        notification.className = 'quote-notification';
+        notification.style.position = 'fixed';
+        notification.style.bottom = '80px';
+        notification.style.left = '50%';
+        notification.style.transform = 'translateX(-50%)';
+        notification.style.backgroundColor = 'rgba(88, 101, 242, 0.9)';
+        notification.style.color = 'white';
+        notification.style.padding = '8px 16px';
+        notification.style.borderRadius = '4px';
+        notification.style.zIndex = '1000';
+        notification.style.fontSize = '14px';
+        notification.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
+        notification.innerHTML = `已引用 <strong>${message.author}</strong> 的消息`;
+
+        document.body.appendChild(notification);
+
+        // 3秒后自动移除提示
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }
+        }, 3000);
+    }
+
     clearInput() {
         this.messageInput.value = '';
+        this.quotedMessage = null;
         this.messageInput.focus();
     }
 

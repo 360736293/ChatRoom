@@ -207,11 +207,26 @@ export class ChatWebSocket extends WebSocketManager {
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
 
-    sendChatMessage(content) {
+    sendChatMessage(content, quotedMessage = null) {
         this.sendTypingStop();
         // 提取@提及的用户
         const mentions = this.extractMentions(content);
-        this.sendMessage(MESSAGE_TYPES.CHAT, content, null, mentions);
+        
+        let messageContent = content;
+        if (quotedMessage) {
+            // 构建引用回复消息格式
+            messageContent = JSON.stringify({
+                type: 'quote_reply',
+                content: content,
+                quoted: {
+                    messageId: quotedMessage.messageId,
+                    author: quotedMessage.author,
+                    content: quotedMessage.content
+                }
+            });
+        }
+        
+        this.sendMessage(MESSAGE_TYPES.CHAT, messageContent, null, mentions);
     }
 
     // 提取@提及的用户

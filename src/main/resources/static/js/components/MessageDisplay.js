@@ -10,6 +10,7 @@ export class MessageDisplay {
         this.currentUserId = currentUserId;
         this.imageHandler = null;
         this.onMentionMessageDisplayed = null;
+        this.onQuoteReply = null;
     }
 
     setImageHandler(imageHandler) {
@@ -17,6 +18,9 @@ export class MessageDisplay {
     }
 
     displayMessage(data) {
+        // 调试：查看消息数据结构
+        console.log('Displaying message:', data);
+        
         const messageElement = this.createMessageElement(data);
         this.container.appendChild(messageElement);
         scrollToBottom(this.container);
@@ -30,6 +34,7 @@ export class MessageDisplay {
         const timeString = messageFormatter.formatTimestamp(data.timestamp);
         const messageElement = createElement('div', 'message');
         
+        // 确保消息元素有messageId
         if (data.messageId) {
             messageElement.setAttribute('data-message-id', data.messageId);
         }
@@ -38,9 +43,109 @@ export class MessageDisplay {
             messageElement.innerHTML = this.createSystemMessage(data, timeString);
         } else {
             messageElement.innerHTML = this.createChatMessage(data, timeString);
+            // 添加右键菜单事件
+            this.addContextMenu(messageElement, data);
         }
 
         return messageElement;
+    }
+
+    // 添加右键菜单
+    addContextMenu(messageElement, messageData) {
+        messageElement.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            this.showContextMenu(e, messageData);
+        });
+    }
+
+    // 显示右键菜单
+    showContextMenu(event, messageData) {
+        // 移除已存在的菜单
+        const existingMenu = document.querySelector('.message-context-menu');
+        if (existingMenu) {
+            existingMenu.remove();
+        }
+
+        // 创建菜单
+        const menu = document.createElement('div');
+        menu.className = 'message-context-menu';
+        menu.style.position = 'fixed';
+        menu.style.left = event.clientX + 'px';
+        menu.style.top = event.clientY + 'px';
+        menu.style.backgroundColor = '#2f3136';
+        menu.style.border = '1px solid #202225';
+        menu.style.borderRadius = '4px';
+        menu.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
+        menu.style.zIndex = '1000';
+        menu.style.minWidth = '150px';
+
+        // 添加引用回复选项
+        const replyOption = document.createElement('div');
+        replyOption.className = 'context-menu-item';
+        replyOption.style.padding = '8px 12px';
+        replyOption.style.cursor = 'pointer';
+        replyOption.style.color = '#dcddde';
+        replyOption.innerHTML = '引用回复';
+        
+        replyOption.addEventListener('click', () => {
+            this.handleQuoteReply(messageData);
+            menu.remove();
+        });
+
+        menu.appendChild(replyOption);
+        document.body.appendChild(menu);
+
+        // 点击其他地方关闭菜单
+        setTimeout(() => {
+            document.addEventListener('click', () => {
+                menu.remove();
+            }, { once: true });
+        }, 0);
+    }
+
+    // 处理引用回复
+    handleQuoteReply(messageData) {
+        if (this.onQuoteReply) {
+            this.onQuoteReply(messageData);
+        }
+    }
+
+    // 创建引用回复UI
+    createQuoteReplyElement(quotedMessage) {
+        let quotedContent = quotedMessage.content;
+        try {
+            const parsed = JSON.parse(quotedContent);
+            if (parsed.type === 'image' && parsed.data) {
+                quotedContent = '[图片]';
+                if (parsed.text) {
+                    quotedContent += ' ' + parsed.text;
+                }
+            }
+        } catch (e) {
+            // 不是JSON，继续使用原文
+        }
+
+        // 截断过长的内容
+        if (quotedContent.length > 100) {
+            quotedContent = quotedContent.substring(0, 97) + '...';
+        }
+
+        const messageId = quotedMessage.messageId || 'unknown';
+
+        return `
+            <div class="quote-reply" data-quoted-message-id="${messageId}" style="cursor: pointer;" onclick="window.scrollToMessage('${messageId}')">
+                <div class="quote-reply-header">
+                    <span class="quote-reply-author">${quotedMessage.author}</span>
+                </div>
+                <div class="quote-reply-content">${messageFormatter.formatMessage(quotedContent, {
+                    currentUserId: this.currentUserId,
+                    enableEmojis: true,
+                    enableLinks: true,
+                    enableMentions: true,
+                    enableLineBreaks: true
+                })}</div>
+            </div>
+        `;
     }
 
     createSystemMessage(data, timeString) {
@@ -62,6 +167,8 @@ export class MessageDisplay {
 
         // 检查是否是图片消息
         let messageContent = data.content;
+        let quoteReplyHtml = '';
+        
         try {
             const parsed = JSON.parse(data.content);
             if (parsed.type === 'image' && parsed.data) {
@@ -77,6 +184,14 @@ export class MessageDisplay {
                         <div class="message-text">${messageContent}</div>
                     </div>
                 `;
+            } else if (parsed.type === 'quote_reply' && parsed.quoted) {
+                // 处理引用回复消息
+                quoteReplyHtml = this.createQuoteReplyElement({
+                    author: parsed.quoted.author,
+                    content: parsed.quoted.content,
+                    messageId: parsed.quoted.messageId
+                });
+                messageContent = parsed.content;
             }
         } catch (e) {
             // 不是 JSON，继续作为普通消息处理
@@ -89,7 +204,9 @@ export class MessageDisplay {
                     <span class="message-author" ${authorStyle}>${data.author}</span>
                     <span class="message-timestamp">${timeString}</span>
                 </div>
-                <div class="message-text">${typeof messageContent === 'string' ?
+                <div class="message-text">
+                    ${quoteReplyHtml}
+                    ${typeof messageContent === 'string' ?
             messageFormatter.formatMessage(messageContent, {
                 currentUserId: this.currentUserId,
                 enableEmojis: true,
@@ -97,7 +214,8 @@ export class MessageDisplay {
                 enableMentions: true,
                 enableCodeBlocks: true,
                 enableLineBreaks: true
-            }) : messageContent}</div>
+            }) : messageContent}
+                </div>
             </div>
         `;
     }
@@ -174,7 +292,9 @@ export class MessageDisplay {
     }
 
     scrollToMessage(messageId, highlight = true) {
+        console.log('Scrolling to message:', messageId);
         const messageElement = this.container.querySelector(`[data-message-id="${messageId}"]`);
+        console.log('Found message element:', messageElement);
         if (messageElement) {
             messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
             
@@ -186,6 +306,7 @@ export class MessageDisplay {
             }
             return true;
         }
+        console.log('Message element not found for id:', messageId);
         return false;
     }
 }

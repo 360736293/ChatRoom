@@ -219,6 +219,53 @@ body {
     word-break: break-all;
 }
 
+/* 引用回复 */
+.quote-reply {
+    background-color: rgba(88, 101, 242, 0.1);
+    border-left: 3px solid #5865f2;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.quote-reply-header {
+    margin-bottom: 4px;
+}
+
+.quote-reply-author {
+    font-weight: 600;
+    color: #5865f2;
+    font-size: 12px;
+}
+
+.quote-reply-content {
+    color: #b9bbbe;
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+/* 右键菜单 */
+.message-context-menu {
+    background-color: #2f3136;
+    border: 1px solid #202225;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.context-menu-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    color: #dcddde;
+    transition: background-color 0.15s ease;
+}
+
+.context-menu-item:hover {
+    background-color: rgba(88, 101, 242, 0.1);
+    color: #5865f2;
+}
+
 /* 消息输入区域 */
 .message-input-container {
     padding: 16px;
