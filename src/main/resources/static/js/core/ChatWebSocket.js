@@ -153,6 +153,9 @@ export class ChatWebSocket extends WebSocketManager {
 
             case MESSAGE_TYPES.USER_LIST:
                 this.userList.updateList(data.users);
+                if (this.messageDisplay && this.messageDisplay.setUserList) {
+                    this.messageDisplay.setUserList(data.users);
+                }
                 // 更新提及自动完成的用户列表
                 if (this.messageHandler) {
                     this.messageHandler.updateUserList(data.users);

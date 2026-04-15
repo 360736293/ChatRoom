@@ -42,7 +42,7 @@ export class MessageFormatter {
 
         // 处理@提及
         if (options.enableMentions !== false) {
-            formatted = this.formatMentions(formatted, options.currentUserId);
+            formatted = this.formatMentions(formatted, options.currentUserId, options.userList);
         }
 
         // 处理表情
@@ -95,8 +95,16 @@ export class MessageFormatter {
     /**
      * 格式化@提及
      */
-    formatMentions(text, currentUserId) {
+    formatMentions(text, currentUserId, userList = []) {
         return text.replace(this.mentionRegex, (match, username) => {
+            // 检查用户是否存在于用户列表中
+            const userExists = userList.some(user => user.username === username || user.userId === username);
+            
+            if (!userExists) {
+                // 如果用户不存在，返回原始文本
+                return match;
+            }
+            
             const isCurrentUser = username === currentUserId;
             const className = isCurrentUser ? 'mention mention-self' : 'mention';
             return `<span class="${className}">@${username}</span>`;

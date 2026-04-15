@@ -11,6 +11,11 @@ export class MessageDisplay {
         this.imageHandler = null;
         this.onMentionMessageDisplayed = null;
         this.onQuoteReply = null;
+        this.userList = [];
+    }
+
+    setUserList(users) {
+        this.userList = users || [];
     }
 
     setImageHandler(imageHandler) {
@@ -139,6 +144,7 @@ export class MessageDisplay {
                 </div>
                 <div class="quote-reply-content">${messageFormatter.formatMessage(quotedContent, {
                     currentUserId: this.currentUserId,
+                    userList: this.userList,
                     enableEmojis: true,
                     enableLinks: true,
                     enableMentions: true,
@@ -209,6 +215,7 @@ export class MessageDisplay {
                     ${typeof messageContent === 'string' ?
             messageFormatter.formatMessage(messageContent, {
                 currentUserId: this.currentUserId,
+                userList: this.userList,
                 enableEmojis: true,
                 enableLinks: true,
                 enableMentions: true,
@@ -227,6 +234,7 @@ export class MessageDisplay {
         if (imageData.text) {
             html += `<div>${messageFormatter.formatMessage(imageData.text, {
                 currentUserId: this.currentUserId,
+                userList: this.userList,
                 enableEmojis: true,
                 enableLinks: true,
                 enableMentions: true,
