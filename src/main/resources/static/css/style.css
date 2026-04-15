@@ -245,6 +245,60 @@ body {
     line-height: 1.3;
 }
 
+/* 输入框引用UI */
+.quote-container {
+    margin-bottom: 8px;
+    border-left: 3px solid #5865f2;
+    background-color: rgba(88, 101, 242, 0.1);
+    border-radius: 4px;
+    padding: 8px 12px;
+}
+
+.quote-display {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.quote-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.quote-author {
+    font-weight: 600;
+    color: #5865f2;
+    font-size: 12px;
+}
+
+.quote-clear {
+    background: none;
+    border: none;
+    color: #b9bbbe;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    transition: all 0.15s ease;
+}
+
+.quote-clear:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #dcddde;
+}
+
+.quote-content {
+    color: #b9bbbe;
+    font-size: 14px;
+    line-height: 1.3;
+}
+
 /* 右键菜单 */
 .message-context-menu {
     background-color: #2f3136;

@@ -185,3 +185,8 @@ window.scrollToMessage = (messageId) => {
         console.log('chatApp or messageDisplay not available');
     }
 };
+window.clearQuote = () => {
+    if (chatApp && chatApp.handlers && chatApp.handlers.messageHandler) {
+        chatApp.handlers.messageHandler.clearQuote();
+    }
+};

@@ -118,6 +118,8 @@ export class MessageDisplay {
     // 创建引用回复UI
     createQuoteReplyElement(quotedMessage) {
         let quotedContent = quotedMessage.content;
+        let author = quotedMessage.author;
+        
         try {
             const parsed = JSON.parse(quotedContent);
             if (parsed.type === 'image' && parsed.data) {
@@ -125,6 +127,23 @@ export class MessageDisplay {
                 if (parsed.text) {
                     quotedContent += ' ' + parsed.text;
                 }
+            } else if (parsed.type === 'quote_reply' && parsed.quoted) {
+                // 处理引用回复，显示直接引用的内容
+                // 保持原始引用关系，不递归处理
+                let content = parsed.content;
+                // 检查内容是否为普通文本
+                try {
+                    const contentParsed = JSON.parse(content);
+                    if (contentParsed.type === 'image' && contentParsed.data) {
+                        content = '[图片]';
+                        if (contentParsed.text) {
+                            content += ' ' + contentParsed.text;
+                        }
+                    }
+                } catch (e) {
+                    // 不是JSON，继续使用原文
+                }
+                quotedContent = content;
             }
         } catch (e) {
             // 不是JSON，继续使用原文
@@ -140,7 +159,7 @@ export class MessageDisplay {
         return `
             <div class="quote-reply" data-quoted-message-id="${messageId}" style="cursor: pointer;" onclick="window.scrollToMessage('${messageId}')">
                 <div class="quote-reply-header">
-                    <span class="quote-reply-author">${quotedMessage.author}</span>
+                    <span class="quote-reply-author">${author}</span>
                 </div>
                 <div class="quote-reply-content">${messageFormatter.formatMessage(quotedContent, {
                     currentUserId: this.currentUserId,

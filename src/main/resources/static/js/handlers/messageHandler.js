@@ -11,6 +11,24 @@ export class MessageHandler {
         this.mentionAutocomplete = new MentionAutocomplete(messageInputId);
         this.quotedMessage = null;
         this.init();
+        this.createQuoteUI();
+    }
+
+    // 创建引用UI
+    createQuoteUI() {
+        // 检查是否已存在引用UI容器
+        let quoteContainer = document.getElementById('quote-container');
+        if (!quoteContainer) {
+            quoteContainer = document.createElement('div');
+            quoteContainer.id = 'quote-container';
+            quoteContainer.className = 'quote-container';
+            quoteContainer.style.display = 'none';
+            
+            // 添加到输入框上方
+            const inputContainer = this.messageInput.parentElement;
+            inputContainer.insertBefore(quoteContainer, this.messageInput);
+        }
+        this.quoteContainer = quoteContainer;
     }
 
     init() {
@@ -84,53 +102,81 @@ export class MessageHandler {
         this.messageInput.value = '';
         this.messageInput.focus();
         
-        // 显示引用提示
-        this.showQuoteNotification(message);
+        // 显示引用UI
+        this.showQuoteUI(message);
     }
 
-    // 显示引用提示
-    showQuoteNotification(message) {
-        // 移除已存在的提示
-        const existingNotification = document.querySelector('.quote-notification');
-        if (existingNotification) {
-            existingNotification.remove();
+    // 显示引用UI
+    showQuoteUI(message) {
+        if (!this.quoteContainer) {
+            this.createQuoteUI();
         }
-
-        // 创建提示元素
-        const notification = document.createElement('div');
-        notification.className = 'quote-notification';
-        notification.style.position = 'fixed';
-        notification.style.bottom = '80px';
-        notification.style.left = '50%';
-        notification.style.transform = 'translateX(-50%)';
-        notification.style.backgroundColor = 'rgba(88, 101, 242, 0.9)';
-        notification.style.color = 'white';
-        notification.style.padding = '8px 16px';
-        notification.style.borderRadius = '4px';
-        notification.style.zIndex = '1000';
-        notification.style.fontSize = '14px';
-        notification.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
-        notification.innerHTML = `已引用 <strong>${message.author}</strong> 的消息`;
-
-        document.body.appendChild(notification);
-
-        // 3秒后自动移除提示
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.style.opacity = '0';
-                notification.style.transition = 'opacity 0.3s ease';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
+        
+        let quotedContent = message.content;
+        try {
+            const parsed = JSON.parse(quotedContent);
+            if (parsed.type === 'image' && parsed.data) {
+                quotedContent = '[图片]';
+                if (parsed.text) {
+                    quotedContent += ' ' + parsed.text;
+                }
+            } else if (parsed.type === 'quote_reply' && parsed.quoted) {
+                // 处理引用回复，显示直接引用的内容
+                let content = parsed.content;
+                try {
+                    const contentParsed = JSON.parse(content);
+                    if (contentParsed.type === 'image' && contentParsed.data) {
+                        content = '[图片]';
+                        if (contentParsed.text) {
+                            content += ' ' + contentParsed.text;
+                        }
                     }
-                }, 300);
+                } catch (e) {
+                    // 不是JSON，继续使用原文
+                }
+                quotedContent = content;
             }
-        }, 3000);
+        } catch (e) {
+            // 不是JSON，继续使用原文
+        }
+        
+        // 截断过长的内容
+        if (quotedContent.length > 100) {
+            quotedContent = quotedContent.substring(0, 97) + '...';
+        }
+        
+        // 更新引用UI
+        this.quoteContainer.innerHTML = `
+            <div class="quote-display">
+                <div class="quote-info">
+                    <span class="quote-author">${message.author}</span>
+                    <button class="quote-clear" onclick="window.clearQuote()">×</button>
+                </div>
+                <div class="quote-content">${quotedContent}</div>
+            </div>
+        `;
+        
+        // 显示引用容器
+        this.quoteContainer.style.display = 'block';
+    }
+
+    // 清除引用
+    clearQuote() {
+        this.quotedMessage = null;
+        if (this.quoteContainer) {
+            this.quoteContainer.style.display = 'none';
+            this.quoteContainer.innerHTML = '';
+        }
+        this.messageInput.focus();
     }
 
     clearInput() {
         this.messageInput.value = '';
         this.quotedMessage = null;
+        if (this.quoteContainer) {
+            this.quoteContainer.style.display = 'none';
+            this.quoteContainer.innerHTML = '';
+        }
         this.messageInput.focus();
     }
 
