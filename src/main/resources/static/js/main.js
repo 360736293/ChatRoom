@@ -11,6 +11,7 @@ import {ChatWebSocket} from './core/ChatWebSocket.js';
 import {ConnectionHandler} from './handlers/connectionHandler.js';
 import {ChannelHandler} from './handlers/channelHandler.js';
 import {MessageHandler} from './handlers/messageHandler.js';
+import {USER_STATUS} from './utils/constants.js';
 
 class ChatApplication {
     constructor() {
@@ -37,10 +38,30 @@ class ChatApplication {
             // 启动WebSocket连接
             await this.chatWebSocket.init(this.userId);
 
+            // 添加窗口焦点事件监听器
+            this.setupWindowFocusListeners();
+
             console.log('聊天应用初始化完成');
         } catch (error) {
             console.error('应用初始化失败:', error);
         }
+    }
+
+    // 设置窗口焦点事件监听器
+    setupWindowFocusListeners() {
+        // 窗口获得焦点时设置为在线状态
+        window.addEventListener('focus', () => {
+            if (this.chatWebSocket) {
+                this.chatWebSocket.sendStatusUpdate(USER_STATUS.ONLINE);
+            }
+        });
+
+        // 窗口失焦时设置为离开状态
+        window.addEventListener('blur', () => {
+            if (this.chatWebSocket) {
+                this.chatWebSocket.sendStatusUpdate(USER_STATUS.IDLE);
+            }
+        });
     }
 
     async getUserId() {

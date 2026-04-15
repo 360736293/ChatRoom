@@ -287,6 +287,11 @@ export class ChatWebSocket extends WebSocketManager {
         }
     }
 
+    // 发送状态更新消息
+    sendStatusUpdate(status) {
+        this.sendMessage(MESSAGE_TYPES.STATUS_CHANGE, status);
+    }
+
     // 添加额外的事件回调
     onConnectionStatusChange = null;
 }
