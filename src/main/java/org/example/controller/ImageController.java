@@ -32,24 +32,24 @@ public class ImageController {
     public ResponseEntity<Resource> getImage(@PathVariable String fileName) {
         try {
             File imageFile = imageStorageService.getImageFile(fileName);
-            
+
             if (!imageFile.exists()) {
                 return ResponseEntity.notFound().build();
             }
-            
+
             // 检测图片类型
             String contentType = Files.probeContentType(imageFile.toPath());
             if (contentType == null) {
                 contentType = MediaType.IMAGE_JPEG_VALUE;
             }
-            
+
             Resource resource = new FileSystemResource(imageFile);
-            
+
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(contentType))
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
                     .body(resource);
-            
+
         } catch (IOException e) {
             log.error("获取图片失败: {}", fileName, e);
             return ResponseEntity.internalServerError().build();

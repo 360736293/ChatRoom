@@ -1,10 +1,8 @@
 package org.example.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.example.constant.ChatConstants;
 import org.example.constant.MessageType;
 import org.example.entity.Message;
@@ -14,14 +12,12 @@ import org.example.event.UserStatusChangeEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import javax.websocket.Session;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.websocket.Session;
 
 /**
  * 广播服务，负责消息广播
@@ -38,7 +34,7 @@ public class BroadcastService {
     private final ChannelService channelService;
 
     private final ObjectMapper objectMapper;
-    
+
     // 上次广播的用户列表，用于减少重复广播
     private List<User> lastBroadcastedUserList = new CopyOnWriteArrayList<>();
 
@@ -68,7 +64,7 @@ public class BroadcastService {
 
             // 获取所有会话
             Map<String, Session> sessions = sessionManager.getAllSessions();
-            
+
             // 批量发送消息
             List<Session> channelSessions = new ArrayList<>();
             for (Map.Entry<String, Session> entry : sessions.entrySet()) {
@@ -77,7 +73,7 @@ public class BroadcastService {
                     channelSessions.add(entry.getValue());
                 }
             }
-            
+
             // 发送消息
             for (Session session : channelSessions) {
                 try {
@@ -87,7 +83,7 @@ public class BroadcastService {
                     log.error("发送消息失败", e);
                 }
             }
-            
+
         } catch (Exception e) {
             log.error("广播消息失败", e);
         }
@@ -98,12 +94,12 @@ public class BroadcastService {
      */
     public void broadcastSystemMessage(String content, String channel) {
         Message systemMsg = new Message(
-            MessageType.SYSTEM.getValue(),
-            content,
-            ChatConstants.SYSTEM_USERNAME,
-            ChatConstants.SYSTEM_AVATAR,
-            channel,
-            ChatConstants.SYSTEM_USER_ID
+                MessageType.SYSTEM.getValue(),
+                content,
+                ChatConstants.SYSTEM_USERNAME,
+                ChatConstants.SYSTEM_AVATAR,
+                channel,
+                ChatConstants.SYSTEM_USER_ID
         );
 
         // 保存到历史记录
@@ -119,7 +115,7 @@ public class BroadcastService {
     public void broadcastUserList() {
         try {
             List<User> currentUserList = userService.getAllUsers();
-            
+
             // 检查用户列表是否有变化，避免重复广播
             if (isUserListChanged(currentUserList)) {
                 Map<String, Object> userListMsg = new HashMap<>();
@@ -139,7 +135,7 @@ public class BroadcastService {
                         }
                     }
                 }
-                
+
                 // 更新上次广播的用户列表，创建用户对象的深拷贝
                 List<User> copiedUserList = new CopyOnWriteArrayList<>();
                 for (User user : currentUserList) {
@@ -157,7 +153,7 @@ public class BroadcastService {
             log.error("广播用户列表失败", e);
         }
     }
-    
+
     /**
      * 检查用户列表是否有变化
      */
@@ -165,17 +161,17 @@ public class BroadcastService {
         if (currentUserList.size() != lastBroadcastedUserList.size()) {
             return true;
         }
-        
+
         for (int i = 0; i < currentUserList.size(); i++) {
             User currentUser = currentUserList.get(i);
             User lastUser = lastBroadcastedUserList.get(i);
-            
+
             if (!currentUser.getUserId().equals(lastUser.getUserId()) ||
-                !currentUser.getStatus().equals(lastUser.getStatus())) {
+                    !currentUser.getStatus().equals(lastUser.getStatus())) {
                 return true;
             }
         }
-        
+
         return false;
     }
 }

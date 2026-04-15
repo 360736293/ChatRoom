@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.example.constant.MessageContentType;
 import org.example.constant.MessageType;
 import org.example.entity.Message;
@@ -15,9 +14,8 @@ import org.example.service.ImageStorageService;
 import org.example.websocket.handler.MessageHandler;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
 import javax.websocket.Session;
+import java.time.LocalDateTime;
 
 @Slf4j
 @Component
@@ -61,15 +59,15 @@ public class ChatMessageHandler implements MessageHandler {
                 JsonNode contentNode = objectMapper.readTree(message.getContent());
                 if (contentNode.has("type") && MessageContentType.IMAGE.getValue().equals(contentNode.get("type").asText())) {
                     message.setContentType(MessageContentType.IMAGE.getValue());
-                    
+
                     // 处理图片存储
                     if (contentNode.has("data") && contentNode.has("fileName")) {
                         String base64Image = contentNode.get("data").asText();
                         String fileName = contentNode.get("fileName").asText();
-                        
+
                         // 存储图片到文件系统
                         String imageUrl = imageStorageService.storeImage(base64Image, fileName);
-                        
+
                         // 构建新的消息内容，只包含图片URL和文本
                         StringBuilder newContent = new StringBuilder();
                         newContent.append("{");
@@ -80,7 +78,7 @@ public class ChatMessageHandler implements MessageHandler {
                         }
                         newContent.append("\"fileName\":\"").append(fileName).append("\"");
                         newContent.append("}");
-                        
+
                         message.setContent(newContent.toString());
                     }
                 }

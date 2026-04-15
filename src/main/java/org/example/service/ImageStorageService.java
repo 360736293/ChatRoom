@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,11 +16,10 @@ import java.util.UUID;
 @Service
 public class ImageStorageService {
 
-    // 图片存储目录
-    private static final String IMAGE_STORAGE_DIR = "images";
-    
     // 图片访问路径前缀
     public static final String IMAGE_ACCESS_PREFIX = "/api/images/";
+    // 图片存储目录
+    private static final String IMAGE_STORAGE_DIR = "images";
 
     public ImageStorageService() {
         // 初始化图片存储目录
@@ -34,8 +32,9 @@ public class ImageStorageService {
 
     /**
      * 存储图片到文件系统
+     *
      * @param base64Image Base64编码的图片
-     * @param fileName 文件名
+     * @param fileName    文件名
      * @return 图片访问路径
      */
     public String storeImage(String base64Image, String fileName) {
@@ -45,21 +44,21 @@ public class ImageStorageService {
             if (parts.length != 2) {
                 throw new IllegalArgumentException("无效的Base64图片格式");
             }
-            
+
             String imageData = parts[1];
             byte[] imageBytes = javax.xml.bind.DatatypeConverter.parseBase64Binary(imageData);
-            
+
             // 生成唯一文件名
             String extension = getFileExtension(fileName);
             String uniqueFileName = UUID.randomUUID().toString() + (extension != null ? "." + extension : ".png");
-            
+
             // 存储图片
             Path imagePath = Paths.get(IMAGE_STORAGE_DIR, uniqueFileName);
             Files.write(imagePath, imageBytes);
-            
+
             // 返回图片访问路径
             return IMAGE_ACCESS_PREFIX + uniqueFileName;
-            
+
         } catch (Exception e) {
             log.error("存储图片失败", e);
             throw new RuntimeException("存储图片失败", e);
@@ -68,6 +67,7 @@ public class ImageStorageService {
 
     /**
      * 根据文件名获取图片文件
+     *
      * @param fileName 文件名
      * @return 图片文件
      */
@@ -77,6 +77,7 @@ public class ImageStorageService {
 
     /**
      * 获取文件扩展名
+     *
      * @param fileName 文件名
      * @return 文件扩展名
      */

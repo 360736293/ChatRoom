@@ -1,7 +1,6 @@
 package org.example.websocket;
 
 import lombok.extern.slf4j.Slf4j;
-
 import org.example.constant.ChatConstants;
 import org.example.entity.User;
 import org.example.service.SessionManager;
@@ -33,8 +32,8 @@ public class ChatWebSocketEndpoint {
 
     // 使用静态方法注入依赖（因为WebSocket端点是由Servlet容器而非Spring容器管理的）
     public static void setDependencies(SessionManager sessionManager,
-        UserService userService,
-        MessageDispatcher messageDispatcher) {
+                                       UserService userService,
+                                       MessageDispatcher messageDispatcher) {
         ChatWebSocketEndpoint.sessionManager = sessionManager;
         ChatWebSocketEndpoint.userService = userService;
         ChatWebSocketEndpoint.messageDispatcher = messageDispatcher;
