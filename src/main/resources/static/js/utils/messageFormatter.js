@@ -9,7 +9,7 @@ export class MessageFormatter {
         this.urlRegex = /(https?:\/\/[^\s]+)/g;
 
         // @提及正则表达式
-        this.mentionRegex = /@(\w+)/g;
+        this.mentionRegex = /@([\w\u4e00-\u9fa5]+)/g;
 
         // 代码块正则表达式
         this.codeBlockRegex = /```([\s\S]*?)```/g;
