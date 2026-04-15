@@ -1,12 +1,12 @@
-# DisDiscord - 实时聊天应用
+# ChatRoom - 实时聊天应用
 
-<img width="1548" height="785" alt="DisDiscord Screenshot" src="https://github.com/user-attachments/assets/e23ac6d0-8517-4efd-ba47-14ca6150df10" />
+<img width="1548" height="785" alt="ChatRoom Screenshot" src="https://github.com/user-attachments/assets/e23ac6d0-8517-4efd-ba47-14ca6150df10" />
 
 ## 📖 项目简介
 
 娱乐项目，功能目前只是个DEMO，完全由AI实现。
 
-DisDiscord 是一个仿 Discord 的实时聊天应用，采用 SpringBoot + WebSocket 构建后端，原生 JavaScript 实现前端，Electron 实现客户端，提供流畅的即时通讯体验。
+ChatRoom 是一个仿 Discord 的实时聊天应用，采用 SpringBoot + WebSocket 构建后端，原生 JavaScript 实现前端，Electron 实现客户端，提供流畅的即时通讯体验。
 
 ### ✨ 主要特性
 
@@ -43,37 +43,87 @@ DisDiscord 是一个仿 Discord 的实时聊天应用，采用 SpringBoot + WebS
 ## 📁 项目结构
 
 ```
-DisDiscord/
+ChatRoom/
 ├── src/main/java/org/example/
 │   ├── config/              # 配置类
 │   │   ├── WebSocketConfig.java
 │   │   ├── CorsConfig.java
 │   │   └── JacksonConfig.java
 │   ├── constant/            # 常量定义
+│   │   ├── ChatConstants.java
+│   │   ├── MessageContentType.java
+│   │   ├── MessageType.java
+│   │   └── UserStatus.java
 │   ├── controller/          # REST控制器
+│   │   ├── ChatController.java
+│   │   ├── ImageController.java
+│   │   └── StaticResourceController.java
 │   ├── entity/              # 实体类
+│   │   ├── Message.java
+│   │   └── User.java
 │   ├── event/               # 事件类
+│   │   ├── UserListUpdateEvent.java
+│   │   └── UserStatusChangeEvent.java
 │   ├── exception/           # 异常处理
+│   │   ├── ChatException.java
+│   │   └── InvalidMessageException.java
 │   ├── service/             # 业务服务
+│   │   ├── BroadcastService.java
+│   │   ├── ChannelService.java
+│   │   ├── ImageStorageService.java
+│   │   ├── SessionManager.java
+│   │   └── UserService.java
 │   ├── websocket/           # WebSocket端点
 │   │   ├── ChatWebSocketEndpoint.java
 │   │   ├── dispatcher/      # 消息分发器
+│   │   │   └── MessageDispatcher.java
 │   │   └── handler/         # 消息处理器
+│   │       ├── MessageHandler.java
+│   │       └── impl/
+│   │           ├── ChannelJoinHandler.java
+│   │           ├── ChatMessageHandler.java
+│   │           ├── StatusChangeHandler.java
+│   │           └── TypingHandler.java
 │   └── ChatRoomApplication.java
 ├── src/main/resources/
 │   ├── static/              # 前端资源
 │   │   ├── css/             # 样式文件
+│   │   │   └── style.css
 │   │   ├── js/              # JavaScript模块
 │   │   │   ├── components/  # UI组件
+│   │   │   │   ├── EmojiPicker.js
+│   │   │   │   ├── ImageHandler.js
+│   │   │   │   ├── MentionAutocomplete.js
+│   │   │   │   ├── MessageDisplay.js
+│   │   │   │   ├── NotificationManager.js
+│   │   │   │   ├── TypingIndicator.js
+│   │   │   │   ├── UserList.js
+│   │   │   │   └── UsernameModal.js
 │   │   │   ├── core/        # 核心功能
+│   │   │   │   ├── ChatWebSocket.js
+│   │   │   │   └── WebSocketManager.js
 │   │   │   ├── handlers/    # 事件处理
+│   │   │   │   ├── channelHandler.js
+│   │   │   │   ├── connectionHandler.js
+│   │   │   │   └── messageHandler.js
 │   │   │   └── utils/       # 工具函数
+│   │   │       ├── constants.js
+│   │   │       ├── dateUtils.js
+│   │   │       ├── domUtils.js
+│   │   │       ├── imageUtils.js
+│   │   │       └── messageFormatter.js
 │   │   └── index.html
 │   └── application.yaml     # 应用配置
 ├── electron-client/         # Electron客户端
-│   ├── electron/            # 主进程代码
 │   ├── assets/              # 客户端资源
+│   │   ├── icon.png
+│   │   └── tray.png
+│   ├── electron/            # 主进程代码
+│   │   ├── main.js
+│   │   └── preload.js
 │   └── package.json
+├── .gitignore
+├── README.md
 └── pom.xml                  # Maven配置
 ```
 
@@ -83,8 +133,8 @@ DisDiscord/
 
 1. 克隆项目
 ```bash
-git clone https://github.com/yourusername/DisDiscord.git
-cd DisDiscord
+git clone https://github.com/yourusername/ChatRoom.git
+cd ChatRoom
 ```
 
 2. 构建项目
