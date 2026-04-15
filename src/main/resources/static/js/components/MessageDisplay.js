@@ -122,7 +122,7 @@ export class MessageDisplay {
         
         try {
             const parsed = JSON.parse(quotedContent);
-            if (parsed.type === 'image' && parsed.data) {
+            if (parsed.type === 'image' && (parsed.data || parsed.url)) {
                 quotedContent = '[图片]';
                 if (parsed.text) {
                     quotedContent += ' ' + parsed.text;
@@ -134,7 +134,7 @@ export class MessageDisplay {
                 // 检查内容是否为普通文本
                 try {
                     const contentParsed = JSON.parse(content);
-                    if (contentParsed.type === 'image' && contentParsed.data) {
+                    if (contentParsed.type === 'image' && (contentParsed.data || contentParsed.url)) {
                         content = '[图片]';
                         if (contentParsed.text) {
                             content += ' ' + contentParsed.text;
@@ -196,7 +196,7 @@ export class MessageDisplay {
         
         try {
             const parsed = JSON.parse(data.content);
-            if (parsed.type === 'image' && parsed.data) {
+            if (parsed.type === 'image' && (parsed.data || parsed.url)) {
                 messageContent = this.createImageMessage(parsed);
                 //图片消息因为提前做过格式化处理直接返回
                 return `
@@ -264,12 +264,18 @@ export class MessageDisplay {
         // 生成唯一ID
         const imageId = 'img-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
 
+        // 确定图片源
+        const imageSrc = imageData.url || imageData.data;
+        if (!imageSrc) {
+            return '<div style="color: #ed4245;">图片加载失败：缺少图片数据</div>';
+        }
+
         // 显示图片
         html += `<img class="message-image" 
                      id="${imageId}"
-                     src="${imageData.data}" 
+                     src="${imageSrc}" 
                      alt="${imageData.fileName || '图片'}"
-                     data-full-image="${imageData.data}"
+                     data-full-image="${imageSrc}"
                      style="cursor: pointer;">`;
 
         // 延迟绑定点击事件
@@ -277,7 +283,7 @@ export class MessageDisplay {
             const imgElement = document.getElementById(imageId);
             if (imgElement) {
                 imgElement.addEventListener('click', () => {
-                    this.imageHandler.showFullImage(imageData.data);
+                    this.imageHandler.showFullImage(imageSrc);
                 });
                 imgElement.addEventListener('error', () => {
                     imgElement.style.display = 'none';

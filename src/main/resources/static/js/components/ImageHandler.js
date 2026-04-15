@@ -130,13 +130,13 @@ export class ImageHandler {
         return true;
     }
 
-    showFullImage(base64) {
+    showFullImage(imageSrc) {
         // 创建全屏预览
         const modal = document.createElement('div');
         modal.className = 'image-preview-modal';
 
         const img = document.createElement('img');
-        img.src = base64;
+        img.src = imageSrc;
 
         modal.appendChild(img);
         document.body.appendChild(modal);

@@ -44,8 +44,9 @@ public class SessionManager {
         Session session = sessions.get(userId);
         if (session != null && session.isOpen()) {
             try {
-                session.getBasicRemote().sendText(message);
-            } catch (IOException e) {
+                // 使用异步写入避免并发写入问题
+                session.getAsyncRemote().sendText(message);
+            } catch (Exception e) {
                 log.error("发送消息失败: userId={}", userId, e);
             }
         }
