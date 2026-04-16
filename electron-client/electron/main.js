@@ -21,7 +21,7 @@ function createWindow() {
             preload: path.join(__dirname, 'preload.js')
         },
         icon: path.join(__dirname, '../assets/icon.png'),
-        title: 'DisDiscord',
+        title: 'ChatRoom',
         show: false // 先不显示，等加载完成
     });
 
@@ -85,7 +85,7 @@ function createTray() {
         }
     ]);
 
-    tray.setToolTip('DisDiscord');
+    tray.setToolTip('ChatRoom');
     tray.setContextMenu(contextMenu);
 
     // 托盘图标双击事件
@@ -161,12 +161,12 @@ function createMenu() {
             label: '帮助',
             submenu: [
                 {
-                    label: '关于 DisDiscord',
+                    label: '关于 ChatRoom',
                     click: () => {
                         dialog.showMessageBox(mainWindow, {
                             type: 'info',
-                            title: '关于 DisDiscord',
-                            message: 'DisDiscord 桌面客户端',
+                            title: '关于 ChatRoom',
+                            message: 'ChatRoom 桌面客户端',
                             detail: '版本: 1.0.0\n基于 Electron 构建',
                             buttons: ['确定']
                         });

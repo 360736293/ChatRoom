@@ -23,7 +23,7 @@ export class UsernameModal {
 
         this.modal.innerHTML = `
             <div class="modal">
-                <div class="modal-title">欢迎来到 DisDiscord</div>
+                <div class="modal-title">欢迎来到 ChatRoom</div>
                 <div class="modal-description">请输入您的用户名以开始聊天</div>
                 <input type="text" class="modal-input" placeholder="输入用户名..." id="usernameInput" maxlength="20">
                 <div class="modal-buttons">
